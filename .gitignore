@@ -1,0 +1,47 @@
+# Unity 생성 파일
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Unity 메모리 캡처와 크래시 리포트
+[Mm]emoryCaptures/
+[Rr]ecordings/
+[Cc]rash[Rr]eports/
+
+# Unity 에셋 스토어 도구
+[Aa]ssets/AssetStoreTools*
+
+# Rider / Visual Studio / VS Code
+.idea/
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# 로그와 로컬 환경 파일
+*.log
+.env
+.env.*
+
+# 빌드 산출물
+*.apk
+*.aab
+*.ipa
+*.app
+*.exe
+*.dmg
+*.zip
