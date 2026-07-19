@@ -255,16 +255,49 @@ docs/playtesting/
 - **Verification:** 투사체 피해와 kill reward가 중복되지 않고 Core 테스트가 통과한다.
 - **Dependencies:** U2a.
 
-### U3. 웨이브·경제·무작위 소환 Core
+### U3a1. 결정론적 난수·재화 Core
 
-- **PR:** `codex/zza-8-session-rules`.
-- **Goal:** 전체 세션 상태, 웨이브 진행, 재화, 그리드 소환, 승패와 재시작 규칙을 완성한다.
-- **Requirements:** R1, R2, R7~R11, R20, R21; AE1, AE2, AE5, AE6, AE8.
-- **Files:** `Assets/_Project/Scripts/Core/{Waves,Economy,Towers,Combat}/`, 관련 Core 테스트.
-- **Approach:** 명시적 상태 머신과 결과 타입으로 명령 실패를 표현한다. 한 틱의 이벤트를 순서대로 수집해 Application이 View에 반영할 수 있게 한다.
-- **Test Scenarios:** 3개 웨이브 진행과 승리, 체력 0 패배, 재화 부족, 그리드 가득 참, 빈 소환 풀, 종료 후 소환, kill reward, restart 초기화, seed 재현성을 검증한다.
-- **Verification:** 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
+- **PR:** `codex/zza-10-random-economy-core`.
+- **Goal:** 런타임 버전에 독립적인 seed 난수와 안전한 재화 증감 원시 규칙을 제공한다.
+- **Requirements:** R8, R9, R11, R21; AE6.
+- **Files:** `Assets/_Project/Scripts/Core/{Random,Economy}/`와 관련 Core 테스트.
+- **Approach:** 고정 알고리즘의 `IRandomSource` 구현과 overflow를 차단하는 `EconomyState`를 둔다.
+- **Test Scenarios:** seed별 고정 수열, 범위 경계, 재화 부족, 잘못된 금액, overflow를 검증한다.
+- **Verification:** 같은 seed가 고정된 기대 수열을 만들고 재화 불변식이 유지된다.
 - **Dependencies:** U2b.
+
+### U3a2. 무작위 타워·슬롯 소환 Core
+
+- **PR:** `codex/zza-10-summon-grid-core`.
+- **Goal:** seed 기반 타워·빈 슬롯 선택과 원자적 비용 차감/배치를 완성한다.
+- **Requirements:** R8~R11, R21; AE1, AE2, AE6.
+- **Files:** `Assets/_Project/Scripts/Core/Towers/`와 관련 Core 테스트.
+- **Approach:** 명시적 소환 실패 결과를 사용하고, 실패 명령은 재화, 슬롯, 난수 상태를 바꾸지 않는다.
+- **Test Scenarios:** 정상 소환, 재화 부족, 빈 슬롯 없음, 빈 소환 풀, 종료 후 소환, 가중치 선택, seed 재현성을 검증한다.
+- **Verification:** 같은 seed와 명령 순서가 같은 타워·슬롯 결과를 만들고 모든 실패 경로가 원자적이다.
+- **Dependencies:** U3a1.
+
+### U3b. 웨이브 진행 Core
+
+- **PR:** `codex/zza-8-wave-core`.
+- **Goal:** 적 스폰 간격, 웨이브 전환, 마지막 웨이브 정리를 Unity 없이 계산한다.
+- **Requirements:** R2, R7, R11, R21; AE5.
+- **Files:** `Assets/_Project/Scripts/Core/Waves/`와 관련 Core 테스트.
+- **Approach:** 웨이브 Definition과 mutable progress를 분리하고, spawn/completion 이벤트를 명시적 결과로 반환한다.
+- **Test Scenarios:** 3개 웨이브 스폰 순서, 간격 경계, 생존 적 대기, 마지막 웨이브 완료를 검증한다.
+- **Verification:** 여러 delta step과 동일 입력에서 같은 스폰·전환 순서가 재현된다.
+- **Dependencies:** U3a2.
+
+### U3c. 게임 세션 상태·전투 순서 Core
+
+- **PR:** `codex/zza-8-session-core`.
+- **Goal:** 체력, 보상, 승패, 전투 틱 순서와 완전한 재시작 규칙을 하나의 세션 경계로 조율한다.
+- **Requirements:** R1, R3~R7, R10, R11, R20, R21; AE3~AE5, AE8.
+- **Files:** `Assets/_Project/Scripts/Core/{Combat,Waves,Economy,Towers}/`와 관련 Core 테스트.
+- **Approach:** 이동·종점, 공격 예약, 투사체·피해, 보상, 웨이브·종료 판정을 고정 순서로 실행하고 결과 이벤트를 수집한다.
+- **Test Scenarios:** 승리, 체력 0 패배, kill reward, 종점/보상 상호 배제, 종료 후 명령, restart 초기화를 검증한다.
+- **Verification:** 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
+- **Dependencies:** U3b.
 
 ### U4. ScriptableObject 데이터와 검증
 
@@ -275,7 +308,7 @@ docs/playtesting/
 - **Approach:** Unity 직렬화용 Definition과 Core snapshot mapper를 분리한다. 개별 `OnValidate`와 전체 dataset validator를 함께 제공하고 기본 에셋은 editor generator로 생성한다.
 - **Test Scenarios:** 중복 ID, 빈 ID, 음수 수치, 0 이하 가중치 합, 누락 참조가 실패한다. 기본 dataset은 통과하고 최소 콘텐츠 수를 만족한다.
 - **Verification:** 메뉴 기반 validator와 EditMode 테스트가 같은 오류를 보고하며 기본 스테이지가 Core 세션으로 변환된다.
-- **Dependencies:** U3.
+- **Dependencies:** U3c.
 
 ### U5. 웨이브와 적의 플레이 가능한 보드
 
