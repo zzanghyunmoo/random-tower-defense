@@ -62,7 +62,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
             {
                 ProjectileView view = _views[order];
                 _views.Remove(order);
-                DestroyObject(view.gameObject);
+                DestroyRuntimeObject(view.gameObject);
             }
         }
 
@@ -80,7 +80,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
         {
             foreach (ProjectileView view in _views.Values)
             {
-                DestroyObject(view.gameObject);
+                DestroyRuntimeObject(view.gameObject);
             }
 
             _views.Clear();
@@ -89,7 +89,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
 
             if (_sprite != null)
             {
-                DestroyObject(_sprite);
+                DestroyRuntimeObject(_sprite);
                 _sprite = null;
             }
         }
@@ -120,7 +120,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
             return sprite;
         }
 
-        private static void DestroyObject(UnityEngine.Object target)
+        private static void DestroyRuntimeObject(UnityEngine.Object target)
         {
             if (UnityEngine.Application.isPlaying)
             {

@@ -85,7 +85,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
             {
                 TowerView view = _towerViews[placementOrder];
                 _towerViews.Remove(placementOrder);
-                DestroyObject(view.gameObject);
+                DestroyRuntimeObject(view.gameObject);
             }
         }
 
@@ -106,12 +106,12 @@ namespace RandomTowerDefense.UnityAdapters.Views
         {
             foreach (TowerView view in _towerViews.Values)
             {
-                DestroyObject(view.gameObject);
+                DestroyRuntimeObject(view.gameObject);
             }
 
             foreach (GameObject slotView in _slotViews)
             {
-                DestroyObject(slotView);
+                DestroyRuntimeObject(slotView);
             }
 
             _towerViews.Clear();
@@ -121,7 +121,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
 
             if (_sprite != null)
             {
-                DestroyObject(_sprite);
+                DestroyRuntimeObject(_sprite);
                 _sprite = null;
             }
         }
@@ -152,7 +152,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
             return sprite;
         }
 
-        private static void DestroyObject(UnityEngine.Object target)
+        private static void DestroyRuntimeObject(UnityEngine.Object target)
         {
             if (UnityEngine.Application.isPlaying)
             {
