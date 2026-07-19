@@ -288,16 +288,27 @@ docs/playtesting/
 - **Verification:** 여러 delta step과 동일 입력에서 같은 스폰·전환 순서가 재현된다.
 - **Dependencies:** U3a2.
 
-### U3c. 게임 세션 상태·전투 순서 Core
+### U3c1. 적·웨이브·체력 수명주기 Core
 
-- **PR:** `codex/zza-8-session-core`.
-- **Goal:** 체력, 보상, 승패, 전투 틱 순서와 완전한 재시작 규칙을 하나의 세션 경계로 조율한다.
-- **Requirements:** R1, R3~R7, R10, R11, R20, R21; AE3~AE5, AE8.
-- **Files:** `Assets/_Project/Scripts/Core/{Combat,Waves,Economy,Towers}/`와 관련 Core 테스트.
-- **Approach:** 이동·종점, 공격 예약, 투사체·피해, 보상, 웨이브·종료 판정을 고정 순서로 실행하고 결과 이벤트를 수집한다.
-- **Test Scenarios:** 승리, 체력 0 패배, kill reward, 종점/보상 상호 배제, 종료 후 명령, restart 초기화를 검증한다.
-- **Verification:** 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
+- **PR:** `codex/zza-8-enemy-wave-session-core`.
+- **Goal:** 웨이브 spawn 요청을 적 runtime으로 만들고 이동·종점 피해·승패·재시작 수명주기를 완성한다.
+- **Requirements:** R1~R3, R6, R7, R11, R20, R21; AE4, AE5, AE8.
+- **Files:** `Assets/_Project/Scripts/Core/{Enemies,Waves,Combat}/`와 관련 Core 테스트.
+- **Approach:** 이동/종점, 죽은 적 정리, 웨이브 spawn을 명시적 phase API와 immutable 결과로 나눠 이후 전투 조율 순서를 고정할 수 있게 한다.
+- **Test Scenarios:** 종점 피해 한 번, 체력 0 패배, 죽은 적 보상 정리 한 번, 승리, spawn order, restart 초기화를 검증한다.
+- **Verification:** 적/웨이브/체력 상태가 phase 경계를 넘어 중복 처리되지 않고 자동 테스트가 통과한다.
 - **Dependencies:** U3b.
+
+### U3c2. 전투·경제 게임 세션 조율 Core
+
+- **PR:** `codex/zza-8-game-session-core`.
+- **Goal:** 소환, 이동·종점, 공격 예약, 투사체·피해, 보상, 웨이브·승패와 완전한 재시작을 하나의 세션 명령 경계로 조율한다.
+- **Requirements:** R1, R3~R11, R20, R21; AE1~AE6, AE8.
+- **Files:** `Assets/_Project/Scripts/Core/{Combat,Waves,Economy,Towers}/`와 관련 Core 테스트.
+- **Approach:** 기존 phase와 시스템을 고정 순서로 호출하고 한 틱의 immutable 결과 이벤트를 수집한다.
+- **Test Scenarios:** 전투 순서, kill reward, 종점/보상 상호 배제, 종료 후 명령, seed 재현, restart 초기화를 검증한다.
+- **Verification:** 전체 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
+- **Dependencies:** U3c1.
 
 ### U4. ScriptableObject 데이터와 검증
 
@@ -308,7 +319,7 @@ docs/playtesting/
 - **Approach:** Unity 직렬화용 Definition과 Core snapshot mapper를 분리한다. 개별 `OnValidate`와 전체 dataset validator를 함께 제공하고 기본 에셋은 editor generator로 생성한다.
 - **Test Scenarios:** 중복 ID, 빈 ID, 음수 수치, 0 이하 가중치 합, 누락 참조가 실패한다. 기본 dataset은 통과하고 최소 콘텐츠 수를 만족한다.
 - **Verification:** 메뉴 기반 validator와 EditMode 테스트가 같은 오류를 보고하며 기본 스테이지가 Core 세션으로 변환된다.
-- **Dependencies:** U3c.
+- **Dependencies:** U3c2.
 
 ### U5. 웨이브와 적의 플레이 가능한 보드
 
