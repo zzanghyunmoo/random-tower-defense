@@ -233,16 +233,27 @@ docs/playtesting/
 - **Verification:** 프로젝트 버전, package lock, Force Text, Visible Meta Files, 플랫폼 설정, 모든 `.meta` 추적 여부를 확인한다.
 - **Dependencies:** 없음.
 
-### U2. 적·경로·타워 전투 Core
+### U2a. 적·경로·피해·표적 선택 Core
 
-- **PR:** `codex/zza-7-core-combat`.
-- **Goal:** Unity 없이 적 이동, 표적 선택, 공격 주기, 피해와 죽음을 결정론적으로 계산한다.
-- **Requirements:** R3~R6, R11, R21; AE3, AE4.
-- **Files:** `Assets/_Project/Scripts/Core/{Combat,Enemies,Towers,Random}/`, `Assets/_Project/Tests/EditMode/Core/`, `Tests/RandomTowerDefense.Core.Tests/`.
+- **PR:** `codex/zza-7-enemy-targeting-core`.
+- **Goal:** Unity 없이 적 이동, 피해, 죽음과 표적 우선순위를 결정론적으로 계산한다.
+- **Requirements:** R3, R4의 표적 선택, R6, R21; AE4.
+- **Files:** `Assets/_Project/Scripts/Core/{Combat,Enemies,Towers}/`, `Assets/_Project/Tests/EditMode/Core/`, `Tests/RandomTowerDefense.Core.Tests/`.
 - **Approach:** Definition snapshot과 mutable runtime state를 분리한다. 적 진행도와 spawn order로 표적 우선순위를 정하고 idempotent death/endpoint transition을 둔다.
-- **Test Scenarios:** 여러 delta step에서도 경로 끝 도달이 한 번만 발생한다. 사거리 경계와 동률 표적이 안정적이다. 죽은 적에 대한 중복 피해가 보상을 만들지 않는다. 같은 seed가 같은 선택을 만든다.
+- **Test Scenarios:** 여러 delta step에서도 경로 끝 도달이 한 번만 발생한다. 사거리 경계와 동률 표적이 안정적이다. 죽은 적에 대한 중복 피해가 보상을 만들지 않는다.
 - **Verification:** Core assembly에서 `UnityEngine` 참조가 없고 단위 테스트가 정상·경계·실패 경로를 모두 통과한다.
 - **Dependencies:** U1.
+
+### U2b. 타워 공격 주기·투사체 Core
+
+- **PR:** `codex/zza-7-tower-projectile-core`.
+- **Goal:** 타워 공격 주기와 투사체 이동·피해를 Unity 없이 계산한다.
+- **Requirements:** R4의 공격 주기, R5, R11, R21; AE3.
+- **Files:** `Assets/_Project/Scripts/Core/{Combat,Towers,Random}/`와 관련 Core 테스트.
+- **Approach:** 타워는 명시적 cooldown과 안정적인 공격 순서를 사용하고, 투사체는 한 번만 적중하거나 표적 소실로 정리되는 상태 전이를 갖는다.
+- **Test Scenarios:** 공격 주기 경계, 투사체 적중, 표적 선행 사망, 중복 tick, 동일 입력 순서의 결정론을 검증한다.
+- **Verification:** 투사체 피해와 kill reward가 중복되지 않고 Core 테스트가 통과한다.
+- **Dependencies:** U2a.
 
 ### U3. 웨이브·경제·무작위 소환 Core
 
@@ -253,7 +264,7 @@ docs/playtesting/
 - **Approach:** 명시적 상태 머신과 결과 타입으로 명령 실패를 표현한다. 한 틱의 이벤트를 순서대로 수집해 Application이 View에 반영할 수 있게 한다.
 - **Test Scenarios:** 3개 웨이브 진행과 승리, 체력 0 패배, 재화 부족, 그리드 가득 참, 빈 소환 풀, 종료 후 소환, kill reward, restart 초기화, seed 재현성을 검증한다.
 - **Verification:** 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
-- **Dependencies:** U2.
+- **Dependencies:** U2b.
 
 ### U4. ScriptableObject 데이터와 검증
 

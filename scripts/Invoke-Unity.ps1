@@ -65,9 +65,10 @@ if ($isWindowsPlatform) {
     $unityProcess = Start-Process `
         -FilePath $unityEditorPath `
         -ArgumentList $windowsArguments `
-        -Wait `
         -PassThru `
         -WindowStyle Hidden
+    Wait-Process -Id $unityProcess.Id
+    $unityProcess.Refresh()
     $unityExitCode = $unityProcess.ExitCode
 }
 else {
