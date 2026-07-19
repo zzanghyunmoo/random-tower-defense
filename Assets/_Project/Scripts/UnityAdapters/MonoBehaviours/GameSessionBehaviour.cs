@@ -23,6 +23,9 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         private TowerBoardView? _towerBoard;
 
         [SerializeField]
+        private ProjectileBoardView? _projectileBoard;
+
+        [SerializeField]
         private long _seed = 42;
 
         private GameSession? _session;
@@ -35,6 +38,9 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
 
         public TowerBoardView TowerBoard => _towerBoard
             ?? throw new InvalidOperationException("The tower board is not configured.");
+
+        public ProjectileBoardView ProjectileBoard => _projectileBoard
+            ?? throw new InvalidOperationException("The projectile board is not configured.");
 
         private void Awake()
         {
@@ -53,6 +59,11 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
                 throw new InvalidOperationException("A tower board view is required.");
             }
 
+            if (_projectileBoard == null)
+            {
+                throw new InvalidOperationException("A projectile board view is required.");
+            }
+
             if (_seed < 0)
             {
                 throw new InvalidOperationException("The session seed must not be negative.");
@@ -61,6 +72,7 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
             _session = new GameSession(GameDataMapper.ToCore(_stage), (ulong)_seed);
             _board.Initialize(_stage);
             _towerBoard.Initialize(_stage);
+            _projectileBoard.Initialize();
         }
 
         private void Start()
@@ -80,6 +92,7 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         {
             GameSessionTickResult result = Session.Advance(deltaSeconds);
             Board.Render(Session.ActiveEnemies);
+            ProjectileBoard.Render(Session.ActiveProjectiles);
             return result;
         }
 
@@ -95,11 +108,13 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
             StageDefinitionAsset stage,
             EnemyBoardView board,
             TowerBoardView towerBoard,
+            ProjectileBoardView projectileBoard,
             long seed)
         {
             _stage = stage;
             _board = board;
             _towerBoard = towerBoard;
+            _projectileBoard = projectileBoard;
             _seed = seed;
         }
 #endif

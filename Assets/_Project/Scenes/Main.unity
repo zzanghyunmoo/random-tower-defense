@@ -119,6 +119,50 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &434554604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 434554606}
+  - component: {fileID: 434554605}
+  m_Layer: 0
+  m_Name: Projectile Board
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &434554605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434554604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a92c7bfec90e4e8fab891bc1276be702, type: 3}
+  m_Name: Projectile Board View
+  m_EditorClassIdentifier: RandomTowerDefense.UnityAdapters::RandomTowerDefense.UnityAdapters.Views.ProjectileBoardView
+--- !u!4 &434554606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 434554604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &848776611
 GameObject:
   m_ObjectHideFlags: 0
@@ -243,6 +287,7 @@ MonoBehaviour:
   _stage: {fileID: 11400000, guid: 753657348cee3b147a3ee8b500644ae9, type: 2}
   _board: {fileID: 1658046171}
   _towerBoard: {fileID: 1679628574}
+  _projectileBoard: {fileID: 434554605}
   _seed: 42
 --- !u!4 &1368409492
 Transform:
@@ -355,3 +400,4 @@ SceneRoots:
   - {fileID: 1658046172}
   - {fileID: 1368409492}
   - {fileID: 1679628575}
+  - {fileID: 434554606}
