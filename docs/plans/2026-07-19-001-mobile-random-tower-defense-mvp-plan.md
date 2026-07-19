@@ -201,7 +201,6 @@ Assets/_Project/
   Tests/{EditMode,PlayMode}/
   Data/{Towers,Enemies,Projectiles,Waves,Stages,Economy}/
   Scenes/
-Build/Standalone/
 Tests/RandomTowerDefense.Core.Tests/
 docs/playtesting/
 .github/workflows/
@@ -228,8 +227,8 @@ docs/playtesting/
 - **PR:** `codex/zza-5-mobile-foundation`.
 - **Goal:** Unity 6.3 프로젝트가 Android/iOS 모듈을 고려한 텍스트 직렬화, 폴더, asmdef, 테스트, CI 뼈대를 갖춘다.
 - **Requirements:** R19, R21, R23.
-- **Files:** `ProjectSettings/`, `Packages/`, `Assets/_Project/Scripts/`, `Assets/_Project/Tests/`, `Build/Standalone/`, `scripts/`, `.github/workflows/core-tests.yml`, `.gitignore`, `.gitattributes` 및 대응 `.meta`.
-- **Approach:** Unity Editor로 프로젝트와 lock 파일을 생성하고 레이어별 assembly boundary를 만든다. Core source를 컴파일하는 .NET 테스트 harness와 GitHub CI를 추가한다.
+- **Files:** `ProjectSettings/`, `Packages/`, `Assets/_Project/Scripts/`, `Assets/_Project/Tests/`, `Tests/RandomTowerDefense.Core.Tests/`, `scripts/`, `.github/workflows/core-tests.yml`, `.gitignore`, `.gitattributes` 및 대응 `.meta`.
+- **Approach:** Unity Editor로 프로젝트와 lock 파일을 생성하고 레이어별 assembly boundary를 만든다. Core source를 컴파일하는 .NET 테스트 harness와 GitHub CI를 추가하며, Unity가 생성한 프로젝트 파일은 계속 무시하되 `Tests/RandomTowerDefense.Core.Tests/*.csproj`만 `.gitignore` 예외로 추적한다.
 - **Test Scenarios:** Unity가 프로젝트를 경고 없이 열고 빈 EditMode 테스트를 검색한다. `dotnet test`가 CI와 로컬에서 성공한다. Android/iOS build target이 설치된 모듈로 선택 가능하다.
 - **Verification:** 프로젝트 버전, package lock, Force Text, Visible Meta Files, 플랫폼 설정, 모든 `.meta` 추적 여부를 확인한다.
 - **Dependencies:** 없음.
