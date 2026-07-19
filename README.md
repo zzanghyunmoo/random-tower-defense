@@ -48,6 +48,13 @@ Unity + C# 기반 2D 랜덤 타워 디펜스 게임입니다.
 dotnet restore Tests/RandomTowerDefense.Core.Tests/RandomTowerDefense.Core.Tests.csproj --locked-mode
 dotnet test Tests/RandomTowerDefense.Core.Tests/RandomTowerDefense.Core.Tests.csproj --configuration Release --no-restore
 ./scripts/Test-ProjectLayout.ps1
-./scripts/Invoke-Unity.ps1 -TestPlatform EditMode
-./scripts/Invoke-Unity.ps1 -TestPlatform PlayMode
+./scripts/Invoke-Unity.ps1 -Task EditMode
+./scripts/Invoke-Unity.ps1 -Task PlayMode
+./scripts/Invoke-Unity.ps1 -Task ValidateData
+./scripts/Invoke-Unity.ps1 -Task BuildAndroid
+./scripts/Invoke-Unity.ps1 -Task ExportIos
 ```
+
+`-TestPlatform EditMode`와 `-TestPlatform PlayMode`도 이전 명령 호환을 위해 계속 지원합니다. 생성된 APK와 Xcode 프로젝트는 `Builds/Validation/`에 저장되며 Git에는 포함하지 않습니다.
+
+플랫폼 도구 설정, 산출물 확인, Android 설치, iOS 서명 단계는 [모바일 빌드와 기기 검증](docs/ops/mobile-build-validation.md)을 따릅니다. 실제 플레이 결과는 [첫 플레이테스트 체크리스트](docs/playtesting/first-playtest.md)에 기록합니다.
