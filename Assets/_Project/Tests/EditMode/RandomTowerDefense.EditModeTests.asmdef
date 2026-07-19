@@ -3,6 +3,7 @@
   "rootNamespace": "RandomTowerDefense.Tests.EditMode",
   "references": [
     "RandomTowerDefense.Core",
+    "RandomTowerDefense.Data",
     "RandomTowerDefense.Editor"
   ],
   "includePlatforms": [
