@@ -2,6 +2,7 @@
 
 using System;
 using RandomTowerDefense.Core.Combat;
+using RandomTowerDefense.Core.Towers;
 using RandomTowerDefense.Data.Definitions;
 using RandomTowerDefense.Data.Runtime;
 using RandomTowerDefense.UnityAdapters.Views;
@@ -19,6 +20,9 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         private EnemyBoardView? _board;
 
         [SerializeField]
+        private TowerBoardView? _towerBoard;
+
+        [SerializeField]
         private long _seed = 42;
 
         private GameSession? _session;
@@ -28,6 +32,9 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
 
         public EnemyBoardView Board => _board
             ?? throw new InvalidOperationException("The enemy board is not configured.");
+
+        public TowerBoardView TowerBoard => _towerBoard
+            ?? throw new InvalidOperationException("The tower board is not configured.");
 
         private void Awake()
         {
@@ -41,6 +48,11 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
                 throw new InvalidOperationException("An enemy board view is required.");
             }
 
+            if (_towerBoard == null)
+            {
+                throw new InvalidOperationException("A tower board view is required.");
+            }
+
             if (_seed < 0)
             {
                 throw new InvalidOperationException("The session seed must not be negative.");
@@ -48,6 +60,7 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
 
             _session = new GameSession(GameDataMapper.ToCore(_stage), (ulong)_seed);
             _board.Initialize(_stage);
+            _towerBoard.Initialize(_stage);
         }
 
         private void Start()
@@ -70,14 +83,23 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
             return result;
         }
 
+        public TowerSummonResult TrySummonTower()
+        {
+            TowerSummonResult result = Session.TrySummonTower();
+            TowerBoard.Render(Session.TowerGrid.GetOccupiedTowers());
+            return result;
+        }
+
 #if UNITY_EDITOR
         public void ConfigureForEditor(
             StageDefinitionAsset stage,
             EnemyBoardView board,
+            TowerBoardView towerBoard,
             long seed)
         {
             _stage = stage;
             _board = board;
+            _towerBoard = towerBoard;
             _seed = seed;
         }
 #endif

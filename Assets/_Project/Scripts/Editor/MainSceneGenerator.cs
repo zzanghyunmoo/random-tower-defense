@@ -41,10 +41,14 @@ namespace RandomTowerDefense.Editor
             EnemyBoardView board = GetOrAddComponent<EnemyBoardView>(boardObject);
             SetSerializedName(board, "Enemy Board View");
 
+            GameObject towerBoardObject = GetOrCreateRootObject(scene, "Tower Board");
+            TowerBoardView towerBoard = GetOrAddComponent<TowerBoardView>(towerBoardObject);
+            SetSerializedName(towerBoard, "Tower Board View");
+
             GameObject sessionObject = GetOrCreateRootObject(scene, "Game Session");
             GameSessionBehaviour session = GetOrAddComponent<GameSessionBehaviour>(sessionObject);
             SetSerializedName(session, "Game Session Behaviour");
-            session.ConfigureForEditor(stage, board, seed: 42);
+            session.ConfigureForEditor(stage, board, towerBoard, seed: 42);
 
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
