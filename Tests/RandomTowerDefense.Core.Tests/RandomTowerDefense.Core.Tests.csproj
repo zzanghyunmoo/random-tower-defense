@@ -21,6 +21,8 @@
   <ItemGroup>
     <Compile Include="..\..\Assets\_Project\Scripts\Core\**\*.cs"
              LinkBase="Core" />
+    <Compile Include="..\..\Assets\_Project\Tests\EditMode\Core\**\*.cs"
+             LinkBase="CoreTests" />
   </ItemGroup>
 
 </Project>
