@@ -6,7 +6,8 @@
     "RandomTowerDefense.Application",
     "RandomTowerDefense.Data",
     "RandomTowerDefense.UnityAdapters",
-    "RandomTowerDefense.Presentation"
+    "RandomTowerDefense.Presentation",
+    "Unity.InputSystem"
   ],
   "includePlatforms": [
     "Editor"

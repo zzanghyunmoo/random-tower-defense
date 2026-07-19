@@ -4,11 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using RandomTowerDefense.Data.Definitions;
+using RandomTowerDefense.Presentation.UI;
 using RandomTowerDefense.UnityAdapters.MonoBehaviours;
 using RandomTowerDefense.UnityAdapters.Views;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 
 namespace RandomTowerDefense.Editor
@@ -53,6 +56,17 @@ namespace RandomTowerDefense.Editor
             GameSessionBehaviour session = GetOrAddComponent<GameSessionBehaviour>(sessionObject);
             SetSerializedName(session, "Game Session Behaviour");
             session.ConfigureForEditor(stage, board, towerBoard, projectileBoard, seed: 42);
+
+            GameObject hudObject = GetOrCreateRootObject(scene, "HUD");
+            GameHudView hud = GetOrAddComponent<GameHudView>(hudObject);
+            SetSerializedName(hud, "Game HUD View");
+            hud.ConfigureForEditor(session);
+
+            GameObject eventSystemObject = GetOrCreateRootObject(scene, "EventSystem");
+            EventSystem eventSystem = GetOrAddComponent<EventSystem>(eventSystemObject);
+            SetSerializedName(eventSystem, "Event System");
+            InputSystemUIInputModule inputModule = GetOrAddComponent<InputSystemUIInputModule>(eventSystemObject);
+            SetSerializedName(inputModule, "Input System UI Input Module");
 
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene, ScenePath))
