@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b6689bef5854648a5bde5b6eb70525c, type: 3}
+  m_Name: WaveStage0102
+  m_EditorClassIdentifier: RandomTowerDefense.Data::RandomTowerDefense.Data.Definitions.WaveDefinitionAsset
+  _id: wave_stage_01_02
+  _enemy: {fileID: 11400000, guid: 4ac9629c16be6b8498e3439a5e39d86d, type: 2}
+  _enemyCount: 8
+  _spawnIntervalSeconds: 0.65
