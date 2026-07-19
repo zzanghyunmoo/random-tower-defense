@@ -8,6 +8,7 @@
 [Ll]ogs/
 [Tt]est[Rr]esults/
 [Uu]ser[Ss]ettings/
+/.utmp/
 
 # Unity 메모리 캡처와 크래시 리포트
 [Mm]emoryCaptures/

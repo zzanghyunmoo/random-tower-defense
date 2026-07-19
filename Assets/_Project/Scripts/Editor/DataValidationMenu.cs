@@ -12,6 +12,28 @@ namespace RandomTowerDefense.Editor
         [MenuItem("Tools/Random Tower Defense/Validate Data")]
         public static void ValidateProjectData()
         {
+            DataValidationResult result = ValidateProjectDataSet(out int definitionCount);
+            if (result.IsValid)
+            {
+                Debug.Log($"Data validation passed for {definitionCount} definitions.");
+                return;
+            }
+
+            foreach (DataValidationIssue issue in result.Issues)
+            {
+                Debug.LogError(issue.ToString(), issue.Source);
+            }
+
+            Debug.LogError($"Data validation failed with {result.Issues.Count} error(s).");
+        }
+
+        public static DataValidationResult ValidateProjectDataSet()
+        {
+            return ValidateProjectDataSet(out _);
+        }
+
+        private static DataValidationResult ValidateProjectDataSet(out int definitionCount)
+        {
             var definitions = new List<DefinitionAsset>();
             string[] assetGuids = AssetDatabase.FindAssets("t:DefinitionAsset");
             Array.Sort(assetGuids, StringComparer.Ordinal);
@@ -25,19 +47,8 @@ namespace RandomTowerDefense.Editor
                 }
             }
 
-            DataValidationResult result = DataValidator.Validate(definitions);
-            if (result.IsValid)
-            {
-                Debug.Log($"Data validation passed for {definitions.Count} definitions.");
-                return;
-            }
-
-            foreach (DataValidationIssue issue in result.Issues)
-            {
-                Debug.LogError(issue.ToString(), issue.Source);
-            }
-
-            Debug.LogError($"Data validation failed with {result.Issues.Count} error(s).");
+            definitionCount = definitions.Count;
+            return DataValidator.Validate(definitions);
         }
     }
 }
