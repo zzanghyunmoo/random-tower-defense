@@ -2,7 +2,9 @@
   "name": "RandomTowerDefense.PlayModeTests",
   "rootNamespace": "RandomTowerDefense.Tests.PlayMode",
   "references": [
-    "RandomTowerDefense.Core"
+    "RandomTowerDefense.Core",
+    "RandomTowerDefense.Data",
+    "RandomTowerDefense.UnityAdapters"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
