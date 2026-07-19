@@ -1,0 +1,19 @@
+{
+  "name": "RandomTowerDefense.PlayModeTests",
+  "rootNamespace": "RandomTowerDefense.Tests.PlayMode",
+  "references": [
+    "RandomTowerDefense.Core"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}

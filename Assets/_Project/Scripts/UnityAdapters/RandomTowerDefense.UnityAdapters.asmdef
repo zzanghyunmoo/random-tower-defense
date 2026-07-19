@@ -1,0 +1,18 @@
+{
+  "name": "RandomTowerDefense.UnityAdapters",
+  "rootNamespace": "RandomTowerDefense.UnityAdapters",
+  "references": [
+    "RandomTowerDefense.Core",
+    "RandomTowerDefense.Application",
+    "RandomTowerDefense.Data"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
