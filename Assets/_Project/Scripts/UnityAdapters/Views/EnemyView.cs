@@ -27,7 +27,7 @@ namespace RandomTowerDefense.UnityAdapters.Views
             _spawnOrder = enemy.SpawnOrder;
             _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
             _spriteRenderer.sprite = sprite;
-            _spriteRenderer.color = ColorFor(enemy.Definition.Id);
+            _spriteRenderer.color = RuntimeViewPalette.ColorForId(enemy.Definition.Id);
             _spriteRenderer.sortingOrder = 10;
 
             float diameter = 0.45f + Mathf.Clamp(Mathf.Sqrt(enemy.Definition.MaxHealth) * 0.035f, 0f, 0.3f);
@@ -48,18 +48,6 @@ namespace RandomTowerDefense.UnityAdapters.Views
             }
 
             transform.position = new Vector3(enemy.Position.X, enemy.Position.Y, 0f);
-        }
-
-        private static Color ColorFor(string id)
-        {
-            uint hash = 2166136261;
-            foreach (char character in id)
-            {
-                hash = (hash ^ character) * 16777619;
-            }
-
-            float hue = (hash % 360) / 360f;
-            return Color.HSVToRGB(hue, 0.55f, 0.92f);
         }
     }
 }
