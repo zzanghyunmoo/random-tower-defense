@@ -1,0 +1,22 @@
+{
+  "name": "RandomTowerDefense.Editor",
+  "rootNamespace": "RandomTowerDefense.Editor",
+  "references": [
+    "RandomTowerDefense.Core",
+    "RandomTowerDefense.Application",
+    "RandomTowerDefense.Data",
+    "RandomTowerDefense.UnityAdapters",
+    "RandomTowerDefense.Presentation"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

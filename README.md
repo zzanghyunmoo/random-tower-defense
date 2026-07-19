@@ -4,8 +4,8 @@ Unity + C# 기반 2D 랜덤 타워 디펜스 게임입니다.
 
 ## 프로젝트 방향
 
-- 대상 플랫폼: Android 우선, 이후 iOS, 장기적으로 Steam
-- 게임 엔진: Unity
+- 대상 플랫폼: Android와 iOS, 장기적으로 Steam
+- 게임 엔진: Unity 6000.3.20f1
 - 프로그래밍 언어: C#
 - 형상 관리: GitHub
 - 위키: Notion
@@ -34,4 +34,20 @@ Unity + C# 기반 2D 랜덤 타워 디펜스 게임입니다.
 - 기능 작업은 Linear 이슈에서 시작합니다.
 - 설계와 결정 사항은 Notion과 `docs/`에 남깁니다.
 - 구현은 작은 단위로 나누고, MVP 전까지는 과한 범용화를 피합니다.
-- Android 빌드를 먼저 검증하고, iOS와 Steam은 게임 루프가 안정된 뒤 다룹니다.
+- 각 구현 PR은 테스트와 리뷰를 통과한 뒤 squash merge하고 다음 작업을 시작합니다.
+
+## 개발 환경
+
+- Unity Hub에서 Unity `6000.3.20f1`을 설치합니다.
+- Android Build Support와 하위 SDK/NDK/OpenJDK 모듈을 설치합니다.
+- iOS Build Support를 설치합니다. Windows에서는 Xcode 프로젝트 생성까지만 검증합니다.
+- 프로젝트의 최소 OS는 Android 7.1(API 25), iOS/iPadOS 15입니다.
+- 순수 C# Core 테스트에는 .NET SDK 10이 필요합니다.
+
+```powershell
+dotnet restore Tests/RandomTowerDefense.Core.Tests/RandomTowerDefense.Core.Tests.csproj --locked-mode
+dotnet test Tests/RandomTowerDefense.Core.Tests/RandomTowerDefense.Core.Tests.csproj --configuration Release --no-restore
+./scripts/Test-ProjectLayout.ps1
+./scripts/Invoke-Unity.ps1 -TestPlatform EditMode
+./scripts/Invoke-Unity.ps1 -TestPlatform PlayMode
+```

@@ -1,0 +1,22 @@
+{
+  "name": "RandomTowerDefense.EditModeTests",
+  "rootNamespace": "RandomTowerDefense.Tests.EditMode",
+  "references": [
+    "RandomTowerDefense.Core",
+    "RandomTowerDefense.Editor"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false,
+  "optionalUnityReferences": [
+    "TestAssemblies"
+  ]
+}
