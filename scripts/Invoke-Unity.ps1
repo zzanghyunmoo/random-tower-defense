@@ -1,8 +1,9 @@
 [CmdletBinding()]
 param(
     [Parameter(Mandatory)]
-    [ValidateSet('EditMode', 'PlayMode')]
-    [string]$TestPlatform,
+    [Alias('TestPlatform')]
+    [ValidateSet('EditMode', 'PlayMode', 'ValidateData', 'BuildAndroid', 'ExportIos')]
+    [string]$Task,
 
     [string]$ResultsDirectory
 )
@@ -30,27 +31,52 @@ if ([string]::IsNullOrWhiteSpace($unityEditorPath) -or -not (Test-Path -LiteralP
 }
 
 if ([string]::IsNullOrWhiteSpace($ResultsDirectory)) {
-    $ResultsDirectory = Join-Path $projectRoot "TestResults/$TestPlatform"
+    $ResultsDirectory = Join-Path $projectRoot "TestResults/$Task"
 }
 
 New-Item -ItemType Directory -Path $ResultsDirectory -Force | Out-Null
 $testResultsPath = Join-Path $ResultsDirectory 'results.xml'
 $logPath = Join-Path $ResultsDirectory 'unity.log'
-$platformArgument = $TestPlatform.ToLowerInvariant()
+$isTestTask = $Task -in @('EditMode', 'PlayMode')
 
-if (Test-Path -LiteralPath $testResultsPath) {
+if (Test-Path -LiteralPath $logPath) {
+    Remove-Item -LiteralPath $logPath -Force
+}
+
+if ($isTestTask -and (Test-Path -LiteralPath $testResultsPath)) {
     Remove-Item -LiteralPath $testResultsPath -Force
 }
 
-$unityArguments = @(
-    '-batchmode',
-    '-nographics',
-    '-projectPath', $projectRoot,
-    '-runTests',
-    '-testPlatform', $platformArgument,
-    '-testResults', $testResultsPath,
-    '-logFile', $logPath
-)
+$unityArguments = @('-batchmode', '-nographics', '-projectPath', $projectRoot)
+if ($isTestTask) {
+    $unityArguments += @(
+        '-runTests',
+        '-testPlatform', $Task.ToLowerInvariant(),
+        '-testResults', $testResultsPath,
+        '-logFile', $logPath
+    )
+}
+else {
+    $methodByTask = @{
+        ValidateData = 'RandomTowerDefense.Editor.Build.MobileBuildPipeline.ValidateData'
+        BuildAndroid = 'RandomTowerDefense.Editor.Build.MobileBuildPipeline.BuildAndroid'
+        ExportIos = 'RandomTowerDefense.Editor.Build.MobileBuildPipeline.ExportIos'
+    }
+    $buildTargetByTask = @{
+        BuildAndroid = 'Android'
+        ExportIos = 'iOS'
+    }
+
+    if ($buildTargetByTask.ContainsKey($Task)) {
+        $unityArguments += @('-buildTarget', $buildTargetByTask[$Task])
+    }
+
+    $unityArguments += @(
+        '-executeMethod', $methodByTask[$Task],
+        '-logFile', $logPath,
+        '-quit'
+    )
+}
 
 if ($isWindowsPlatform) {
     $windowsArguments = @($unityArguments | ForEach-Object {
@@ -77,11 +103,35 @@ else {
 }
 
 if ($unityExitCode -ne 0) {
-    throw "Unity $TestPlatform tests failed. See $logPath."
+    throw "Unity task $Task failed. See $logPath."
 }
 
-if (-not (Test-Path -LiteralPath $testResultsPath)) {
-    throw "Unity $TestPlatform tests did not produce $testResultsPath. See $logPath."
+if ($isTestTask) {
+    if (-not (Test-Path -LiteralPath $testResultsPath)) {
+        throw "Unity $Task tests did not produce $testResultsPath. See $logPath."
+    }
+
+    Write-Host "Unity $Task tests passed. Results: $testResultsPath"
+    return
 }
 
-Write-Host "Unity $TestPlatform tests passed. Results: $testResultsPath"
+$successMarker = if ($Task -eq 'ValidateData') {
+    'AUTOMATION_DATA_VALIDATION_SUCCEEDED'
+}
+else {
+    'AUTOMATION_PLAYER_BUILD_SUCCEEDED'
+}
+if (-not (Select-String -LiteralPath $logPath -SimpleMatch $successMarker -Quiet)) {
+    throw "Unity task $Task did not report '$successMarker'. See $logPath."
+}
+
+$expectedOutput = switch ($Task) {
+    'BuildAndroid' { Join-Path $projectRoot 'Builds/Validation/Android/RandomTowerDefense.apk' }
+    'ExportIos' { Join-Path $projectRoot 'Builds/Validation/iOS/Unity-iPhone.xcodeproj/project.pbxproj' }
+    default { $null }
+}
+if ($expectedOutput -and -not (Test-Path -LiteralPath $expectedOutput)) {
+    throw "Unity task $Task did not create $expectedOutput. See $logPath."
+}
+
+Write-Host "Unity task $Task passed. Log: $logPath"
