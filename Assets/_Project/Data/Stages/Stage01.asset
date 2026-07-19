@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa95b07329e74767b767ab7177b2b900, type: 3}
+  m_Name: Stage01
+  m_EditorClassIdentifier: RandomTowerDefense.Data::RandomTowerDefense.Data.Definitions.StageDefinitionAsset
+  _id: stage_01
+  _startingHealth: 10
+  _economy: {fileID: 11400000, guid: 40a2797bc552d6a41b59bb46097b2f30, type: 2}
+  _pathPoints:
+  - {x: -7, y: 0}
+  - {x: -3, y: 0}
+  - {x: 0, y: 2}
+  - {x: 4, y: 2}
+  - {x: 7, y: 0}
+  _waves:
+  - {fileID: 11400000, guid: be28a533bf4893a468070ff15c4421d2, type: 2}
+  - {fileID: 11400000, guid: 090c58a22d3df224a99ca48cfaa4c3e0, type: 2}
+  - {fileID: 11400000, guid: 82160d68fe839344988d91294a5cfc91, type: 2}
+  _towerSlots:
+  - _id: slot_01
+    _position: {x: -5, y: 1.5}
+    _placementOrder: 0
+  - _id: slot_02
+    _position: {x: -3, y: -1.5}
+    _placementOrder: 1
+  - _id: slot_03
+    _position: {x: -1, y: 3.5}
+    _placementOrder: 2
+  - _id: slot_04
+    _position: {x: 1, y: 0}
+    _placementOrder: 3
+  - _id: slot_05
+    _position: {x: 3, y: 4}
+    _placementOrder: 4
+  - _id: slot_06
+    _position: {x: 4, y: 0}
+    _placementOrder: 5
+  - _id: slot_07
+    _position: {x: 6, y: 3}
+    _placementOrder: 6
+  - _id: slot_08
+    _position: {x: 6, y: -1}
+    _placementOrder: 7
+  _summonPool:
+  - _tower: {fileID: 11400000, guid: e2ccaf4af7da13e4eb0d18371046af87, type: 2}
+    _weight: 3
+  - _tower: {fileID: 11400000, guid: 8b98ccbb1f7ca7c4f8690a128793d593, type: 2}
+    _weight: 2
