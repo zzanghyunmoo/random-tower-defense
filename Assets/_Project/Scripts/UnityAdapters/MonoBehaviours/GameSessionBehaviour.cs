@@ -42,6 +42,22 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         public ProjectileBoardView ProjectileBoard => _projectileBoard
             ?? throw new InvalidOperationException("The projectile board is not configured.");
 
+        public int CurrentHealth => Session.CurrentHealth;
+
+        public int CurrentWaveNumber => Math.Min(Session.CurrentWaveIndex + 1, TotalWaveCount);
+
+        public int TotalWaveCount => Session.Definition.Waves.Count;
+
+        public int Currency => Session.Economy.Balance;
+
+        public int SummonCost => Session.Definition.SummonCost;
+
+        public int EmptyTowerSlotCount => Session.TowerGrid.EmptySlotCount;
+
+        public bool CanSummon => Session.CanSummon;
+
+        public bool IsRunning => Session.Status == GameSessionStatus.Running;
+
         private void Awake()
         {
             if (_stage == null)
@@ -101,6 +117,11 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
             TowerSummonResult result = Session.TrySummonTower();
             TowerBoard.Render(Session.TowerGrid.GetOccupiedTowers());
             return result;
+        }
+
+        public bool TrySummonFromPlayer()
+        {
+            return TrySummonTower().Succeeded;
         }
 
 #if UNITY_EDITOR

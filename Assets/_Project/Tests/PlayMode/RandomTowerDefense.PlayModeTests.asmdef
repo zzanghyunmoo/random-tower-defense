@@ -4,6 +4,7 @@
   "references": [
     "RandomTowerDefense.Core",
     "RandomTowerDefense.Data",
+    "RandomTowerDefense.Presentation",
     "RandomTowerDefense.UnityAdapters"
   ],
   "includePlatforms": [],
