@@ -29,6 +29,7 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         private long _seed = 42;
 
         private GameSession? _session;
+        private bool _isApplicationPaused;
 
         public GameSession Session => _session
             ?? throw new InvalidOperationException("The game session has not been initialized.");
@@ -57,6 +58,10 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         public bool CanSummon => Session.CanSummon;
 
         public bool IsRunning => Session.Status == GameSessionStatus.Running;
+
+        public bool HasVictory => Session.Status == GameSessionStatus.Victory;
+
+        public bool IsApplicationPaused => _isApplicationPaused;
 
         private void Awake()
         {
@@ -98,10 +103,15 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
 
         private void Update()
         {
-            if (Session.Status == GameSessionStatus.Running)
+            if (!_isApplicationPaused && Session.Status == GameSessionStatus.Running)
             {
                 AdvanceSession(Time.deltaTime);
             }
+        }
+
+        private void OnApplicationPause(bool pauseStatus)
+        {
+            _isApplicationPaused = pauseStatus;
         }
 
         public GameSessionTickResult AdvanceSession(float deltaSeconds)
@@ -122,6 +132,15 @@ namespace RandomTowerDefense.UnityAdapters.MonoBehaviours
         public bool TrySummonFromPlayer()
         {
             return TrySummonTower().Succeeded;
+        }
+
+        public void RestartFromPlayer()
+        {
+            Session.Restart();
+            Board.Render(Session.ActiveEnemies);
+            TowerBoard.Render(Session.TowerGrid.GetOccupiedTowers());
+            ProjectileBoard.Render(Session.ActiveProjectiles);
+            AdvanceSession(0f);
         }
 
 #if UNITY_EDITOR

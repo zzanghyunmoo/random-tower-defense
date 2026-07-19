@@ -19,6 +19,9 @@ namespace RandomTowerDefense.Presentation.UI
         private Text? _summonLabel;
         private Button? _summonButton;
         private SafeAreaFitter? _safeArea;
+        private GameObject? _resultOverlay;
+        private Text? _resultText;
+        private Button? _restartButton;
         private int _displayedWaveNumber = int.MinValue;
         private int _displayedTotalWaveCount = int.MinValue;
         private int _displayedHealth = int.MinValue;
@@ -28,6 +31,9 @@ namespace RandomTowerDefense.Presentation.UI
         private bool _displayedCanSummon;
         private bool _displayedIsRunning;
         private bool _hasDisplayedSummonState;
+        private bool _displayedResultIsRunning;
+        private bool _displayedHasVictory;
+        private bool _hasDisplayedResultState;
 
         public Text WaveText => Require(_waveText, "Wave text");
 
@@ -40,6 +46,12 @@ namespace RandomTowerDefense.Presentation.UI
         public Button SummonButton => Require(_summonButton, "Summon button");
 
         public SafeAreaFitter SafeArea => Require(_safeArea, "Safe area fitter");
+
+        public GameObject ResultOverlay => Require(_resultOverlay, "Result overlay");
+
+        public Text ResultText => Require(_resultText, "Result text");
+
+        public Button RestartButton => Require(_restartButton, "Restart button");
 
         private GameSessionBehaviour Session => Require(_session, "Game session");
 
@@ -59,6 +71,11 @@ namespace RandomTowerDefense.Presentation.UI
             {
                 _summonButton.onClick.AddListener(OnSummonClicked);
             }
+
+            if (_restartButton != null)
+            {
+                _restartButton.onClick.AddListener(OnRestartClicked);
+            }
         }
 
         private void Start()
@@ -77,6 +94,11 @@ namespace RandomTowerDefense.Presentation.UI
             {
                 _summonButton.onClick.RemoveListener(OnSummonClicked);
             }
+
+            if (_restartButton != null)
+            {
+                _restartButton.onClick.RemoveListener(OnRestartClicked);
+            }
         }
 
         public void Refresh()
@@ -89,6 +111,7 @@ namespace RandomTowerDefense.Presentation.UI
             int emptySlotCount = Session.EmptyTowerSlotCount;
             bool canSummon = Session.CanSummon;
             bool isRunning = Session.IsRunning;
+            bool hasVictory = Session.HasVictory;
             bool currencyChanged = currency != _displayedCurrency;
 
             if (waveNumber != _displayedWaveNumber || totalWaveCount != _displayedTotalWaveCount)
@@ -127,11 +150,32 @@ namespace RandomTowerDefense.Presentation.UI
                 _displayedEmptySlotCount = emptySlotCount;
                 _hasDisplayedSummonState = true;
             }
+
+            if (!_hasDisplayedResultState ||
+                isRunning != _displayedResultIsRunning ||
+                hasVictory != _displayedHasVictory)
+            {
+                ResultOverlay.SetActive(!isRunning);
+                if (!isRunning)
+                {
+                    ResultText.text = hasVictory ? "Victory" : "Defeat";
+                }
+
+                _displayedResultIsRunning = isRunning;
+                _displayedHasVictory = hasVictory;
+                _hasDisplayedResultState = true;
+            }
         }
 
         private void OnSummonClicked()
         {
             Session.TrySummonFromPlayer();
+            Refresh();
+        }
+
+        private void OnRestartClicked()
+        {
+            Session.RestartFromPlayer();
             Refresh();
         }
 
@@ -210,6 +254,43 @@ namespace RandomTowerDefense.Presentation.UI
 
             _summonLabel = CreateText("Label", buttonRect, Vector2.zero, Vector2.one);
             _summonLabel.fontSize = 30;
+
+            BuildResultOverlay(safeAreaRoot);
+        }
+
+        private void BuildResultOverlay(Transform safeAreaRoot)
+        {
+            RectTransform overlayRect = CreateRect("Result Overlay", safeAreaRoot);
+            Stretch(overlayRect);
+            Image overlayImage = overlayRect.gameObject.AddComponent<Image>();
+            overlayImage.color = new Color(0.025f, 0.035f, 0.055f, 0.94f);
+            overlayImage.raycastTarget = true;
+            _resultOverlay = overlayRect.gameObject;
+
+            _resultText = CreateText(
+                "Result",
+                overlayRect,
+                new Vector2(0.2f, 0.55f),
+                new Vector2(0.8f, 0.82f));
+            _resultText.fontSize = 64;
+            _resultText.resizeTextMaxSize = 72;
+
+            RectTransform restartRect = CreateRect("Restart Button", overlayRect);
+            restartRect.anchorMin = new Vector2(0.5f, 0.35f);
+            restartRect.anchorMax = new Vector2(0.5f, 0.35f);
+            restartRect.pivot = new Vector2(0.5f, 0.5f);
+            restartRect.sizeDelta = new Vector2(360f, 112f);
+
+            Image restartImage = restartRect.gameObject.AddComponent<Image>();
+            restartImage.color = new Color(0.95f, 0.62f, 0.16f, 1f);
+            _restartButton = restartRect.gameObject.AddComponent<Button>();
+            _restartButton.targetGraphic = restartImage;
+
+            Text restartLabel = CreateText("Label", restartRect, Vector2.zero, Vector2.one);
+            restartLabel.text = "Restart";
+            restartLabel.fontSize = 30;
+
+            _resultOverlay.SetActive(false);
         }
 
         private static RectTransform CreateRect(string name, Transform parent)
