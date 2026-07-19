@@ -310,16 +310,38 @@ docs/playtesting/
 - **Verification:** 전체 세션 상태 전이와 경제 불변식이 자동 테스트로 증명되고 CI에서 통과한다.
 - **Dependencies:** U3c1.
 
-### U4. ScriptableObject 데이터와 검증
+### U4a. ScriptableObject 데이터 스키마·Core mapper
 
-- **PR:** `codex/zza-12-game-data`.
-- **Goal:** 모든 밸런스와 콘텐츠를 유효한 기본 Definition 에셋으로 제공하고 잘못된 데이터를 실행 전에 차단한다.
-- **Requirements:** R12~R15, R24; F5.
-- **Files:** `Assets/_Project/Scripts/Data/`, `Assets/_Project/Scripts/Editor/`, `Assets/_Project/Data/`, `Assets/_Project/Tests/EditMode/Data/`, `docs/playtesting/first-playtest.md`.
-- **Approach:** Unity 직렬화용 Definition과 Core snapshot mapper를 분리한다. 개별 `OnValidate`와 전체 dataset validator를 함께 제공하고 기본 에셋은 editor generator로 생성한다.
-- **Test Scenarios:** 중복 ID, 빈 ID, 음수 수치, 0 이하 가중치 합, 누락 참조가 실패한다. 기본 dataset은 통과하고 최소 콘텐츠 수를 만족한다.
-- **Verification:** 메뉴 기반 validator와 EditMode 테스트가 같은 오류를 보고하며 기본 스테이지가 Core 세션으로 변환된다.
+- **PR:** `codex/zza-12-data-schema`.
+- **Goal:** 적, 투사체, 타워, 웨이브, 경제, 스테이지를 Unity 직렬화 데이터로 표현하고 Core 세션 Definition으로 변환한다.
+- **Requirements:** R12, R13, R21; F5.
+- **Files:** `Assets/_Project/Scripts/Data/{Definitions,Runtime}/`와 관련 EditMode 테스트.
+- **Approach:** 에셋 참조와 Unity `Vector2`는 mapper 경계에서 ID 기반 순수 C# snapshot으로 변환한다.
+- **Test Scenarios:** 완전한 3-wave stage 변환과 누락된 필수 참조 오류를 검증한다.
+- **Verification:** 변환 결과로 `GameSession`을 생성·시작할 수 있고 Data 외부 Core에는 Unity 참조가 없다.
 - **Dependencies:** U3c2.
+
+### U4b. 데이터셋 validator
+
+- **PR:** `codex/zza-12-data-validator`.
+- **Goal:** 잘못된 Definition을 실행 전 한 번에 발견하고 개별 `OnValidate`와 메뉴 검증에서 같은 오류를 보고한다.
+- **Requirements:** R13, R14, R21; F5.
+- **Files:** `Assets/_Project/Scripts/Data/Validation/`, `Assets/_Project/Scripts/Editor/`, 관련 EditMode 테스트.
+- **Approach:** ID, 필수 참조, 수치 범위, 가중치 합, path, 최소 콘텐츠와 중복 참조를 순수 결과 목록으로 검사한다.
+- **Test Scenarios:** 빈/중복 ID, 음수 수치, 0 이하/overflow 가중치, 누락 참조, 잘못된 path가 실패한다.
+- **Verification:** mapper 전에 validator가 모든 오류를 수집하고 유효 데이터에는 오류가 없다.
+- **Dependencies:** U4a.
+
+### U4c. 기본 콘텐츠 에셋·플레이테스트 문서
+
+- **PR:** `codex/zza-12-default-content`.
+- **Goal:** 바로 플레이 가능한 2종 타워, 2종 적, 3-wave 스테이지와 첫 플레이테스트 체크리스트를 제공한다.
+- **Requirements:** R15, R24; F5.
+- **Files:** `Assets/_Project/Data/`, editor generator, `docs/playtesting/first-playtest.md`, 관련 EditMode 테스트.
+- **Approach:** Unity Editor generator로 텍스트 직렬화 에셋을 생성하고 수동 대량 YAML 편집을 피한다.
+- **Test Scenarios:** 기본 dataset의 존재, 최소 콘텐츠 수, validator 통과와 Core 변환을 검증한다.
+- **Verification:** generator 재실행이 idempotent하고 기본 stage가 `GameSession`을 시작한다.
+- **Dependencies:** U4b.
 
 ### U5. 웨이브와 적의 플레이 가능한 보드
 
@@ -330,7 +352,7 @@ docs/playtesting/
 - **Approach:** 한 bootstrap composition root가 데이터, clock, random, GameSession을 조립한다. MonoBehaviour는 tick과 이벤트를 전달하고 View 수명만 관리한다.
 - **Test Scenarios:** Scene 시작 시 첫 웨이브가 한 번 생성된다. 적이 경로를 따라 이동하고 종점에서 체력이 감소한다. 재시작과 Scene reload가 중복 listener를 만들지 않는다.
 - **Verification:** PlayMode 테스트와 에디터 실행에서 3개 웨이브·승패 상태까지 console error 없이 진행된다.
-- **Dependencies:** U4.
+- **Dependencies:** U4c.
 
 ### U6. 타워 소환·자동 공격·투사체 연결
 
