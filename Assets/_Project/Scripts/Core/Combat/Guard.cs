@@ -75,6 +75,16 @@ namespace RandomTowerDefense.Core.Combat
             return value;
         }
 
+        public static int Positive(int value, string parameterName)
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, value, "Value must be positive.");
+            }
+
+            return value;
+        }
+
         public static long NonNegative(long value, string parameterName)
         {
             if (value < 0)
