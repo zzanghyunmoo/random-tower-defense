@@ -5,7 +5,9 @@
     "RandomTowerDefense.Core",
     "RandomTowerDefense.Data",
     "RandomTowerDefense.Presentation",
-    "RandomTowerDefense.UnityAdapters"
+    "RandomTowerDefense.UnityAdapters",
+    "Unity.InputSystem",
+    "Unity.InputSystem.TestFramework"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],
